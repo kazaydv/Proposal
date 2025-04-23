@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Romantic Gift - Newari Style</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(120deg, #ffdde1, #ee9ca7);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      animation: fadeIn 2s ease-in;
+      text-align: center;
+      transition: background 1s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .gift-box {
+      text-align: center;
+    }
+
+    .gift-box img {
+      width: 120px;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+      filter: drop-shadow(0 0 10px #fff3);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .proposal, .response {
+      background: #fff8f0;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      animation: slideUp 1s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .proposal h1 {
+      color: #e84393;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    .proposal p {
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+    }
+
+    .yes {
+      background: #55efc4;
+      color: #2d3436;
+    }
+
+    .no {
+      background: #ffeaa7;
+      color: #2d3436;
+    }
+
+    .celebrate {
+      font-size: 2em;
+      color: #d63031;
+      animation: fadeIn 2s;
+    }
+
+    .dark-theme {
+      background: black;
+      color: black;
+    }
+
+    .end-btn {
+      background: #fab1a0;
+      color: #2d3436;
+      margin-top: 30px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100vw;
+      height: 100vh;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+  <audio id="cheer-sound" src="cheer.mp3"></audio>
+  <audio id="boo-sound" src="boo.mp3"></audio>
+
+  <div id="app"></div>
+
+  <script>
+    const app = document.getElementById("app");
+    const cheerSound = document.getElementById("cheer-sound");
+    const booSound = document.getElementById("boo-sound");
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+
+    function showGiftBox() {
+      document.body.classList.remove('dark-theme');
+      app.innerHTML = `
+        <div class="gift-box">
+          <img src="https://cdn-icons-png.freepik.com/512/6459/6459276.png" alt="Gift Box" onclick="showProposal()">
+          <p style="color: white; font-size: 1.2em; margin-top: 10px;"> Maicha Open only if you really want to 💌</p>
+        </div>
+      `;
+      stopConfetti();
+    }
+
+    function showProposal() {
+      app.innerHTML = `
+        <div class="proposal">
+          <h1>Will You Be Mine Maicha? ❤️</h1>
+          <p>From the moment I saw you, I knew you were special. Everything about you makes my world brighter. Would you make me the happiest person alive by saying yes?</p>
+          <div class="buttons">
+            <button class="btn yes" onclick="showYes()">Yes</button>
+            <button class="btn no" onclick="showNo()">No</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function showYes() {
+      cheerSound.play();
+      startConfetti();
+      app.innerHTML = `
+        <div class="response">
+          <div class="celebrate">🎉 ummhmm nice nice 🎉</div>
+          <p>Yes bhandeko timi le ? Really la sachi ho? Am i lucky enough to get a girl like you maicha ??? okay aba last ma accept garisakeko ho bhanne mah bhanda khusi aru ko hola . Chito bhetam aba aru thaha chaina malai . ani maicha aila rakhamla hai hamro bihe ma ...💑</p>
+          <button class="btn end-btn" onclick="showGiftBox()">The End</button>
+        </div>
+      `;
+    }
+
+    function showNo() {
+      booSound.play();
+      document.body.classList.add('dark-theme');
+      app.innerHTML = `
+        <div class="response">
+          <h2>It's Okay 💔</h2>
+          <p>hehe sorry maicha , i know maile k k garirako chu i don't know tara esari pani ek try garam na bhanera ho . Namramro lako bhaye malai maaf gardinu hola . Bhagya ma cha bhanne kunai din vetiyela , but i won't stop here , will be keep on trying maicha.🌠</p>
+          <button class="btn end-btn" onclick="showGiftBox()">The End</button>
+        </div>
+      `;
+    }
+
+    function startConfetti() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 5 + 1,
+          color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: Math.random() * 0.1
+        });
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+      });
+
+      updateConfetti();
+      requestAnimationFrame(animateConfetti);
+    }
+
+    function updateConfetti() {
+      confetti.forEach((c, i) => {
+        c.y += c.d;
+        c.tiltAngle += 0.1;
+        c.x += Math.sin(c.tiltAngle);
+        if (c.y > canvas.height) confetti[i] = {
+          x: Math.random() * canvas.width,
+          y: -10,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 5 + 1,
+          color: c.color,
+          tilt: Math.random() * 10 - 5,
+          tiltAngle: 0
+        };
+      });
+    }
+
+    function stopConfetti() {
+      confetti = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    showGiftBox();
+  </script>
+</body>
+</html>
